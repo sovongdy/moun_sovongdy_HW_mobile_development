@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Disabled State text color (dimmed) -->
+    <item android:color="#5C727D" android:state_enabled="false" />
+
+    <!-- Enabled State text color (dark background color) -->
+    <item android:color="@color/bg_dark" />
+</selector>
