@@ -1,12 +1,10 @@
 package com.example.myapplication;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.Html;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,13 +23,14 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
-public class MainActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity {
 
     private TextInputEditText etEmail;
+    private TextInputEditText etUsername;
     private TextInputEditText etPassword;
-    private MaterialButton btnLogin;
-    private TextView tvForgotPassword;
-    private TextView tvSignUp;
+    private TextInputEditText etConfirmPassword;
+    private MaterialButton btnRegister;
+    private TextView tvLogIn;
     private ImageButton btnGoogle;
     private ImageButton btnFacebook;
     private ImageButton btnGithub;
@@ -40,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_register);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.ime());
@@ -54,25 +53,22 @@ public class MainActivity extends AppCompatActivity {
 
     private void initViews() {
         etEmail = findViewById(R.id.etEmail);
+        etUsername = findViewById(R.id.etUsername);
         etPassword = findViewById(R.id.etPassword);
-        btnLogin = findViewById(R.id.btnLogin);
-        tvForgotPassword = findViewById(R.id.tvForgotPassword);
-        tvSignUp = findViewById(R.id.tvSignUp);
+        etConfirmPassword = findViewById(R.id.etConfirmPassword);
+        btnRegister = findViewById(R.id.btnRegister);
+        tvLogIn = findViewById(R.id.tvLogIn);
         btnGoogle = findViewById(R.id.btnGoogle);
         btnFacebook = findViewById(R.id.btnFacebook);
         btnGithub = findViewById(R.id.btnGithub);
 
-        // Format "Don't have an account? Sign Up" text
-        String signUpText = getString(R.string.dont_have_account_sign_up);
-        tvSignUp.setText(Html.fromHtml(signUpText, Html.FROM_HTML_MODE_LEGACY));
+        // Format "Already have an account? Log In" text
+        String logInText = getString(R.string.already_have_account_log_in);
+        tvLogIn.setText(Html.fromHtml(logInText, Html.FROM_HTML_MODE_LEGACY));
     }
 
-    // Inside your Activity
     private void hideKeyboard() {
-        // Find the currently focused view, so we can grab the correct window token from it.
-        View view = this.getCurrentFocus();
-
-        // If no view is focused, fallback to the decor view so we have a valid window token
+        View view = getCurrentFocus();
         if (view == null) {
             view = getWindow().getDecorView();
         }
@@ -91,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
                 Rect outRect = new Rect();
                 v.getGlobalVisibleRect(outRect);
                 if (!outRect.contains((int) ev.getRawX(), (int) ev.getRawY())) {
-                    // We MUST hide the keyboard BEFORE clearing focus!
                     hideKeyboard();
                     v.clearFocus();
                 }
@@ -102,10 +97,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkFieldsForEmptyValues() {
         String email = etEmail.getText() != null ? etEmail.getText().toString().trim() : "";
+        String username = etUsername.getText() != null ? etUsername.getText().toString().trim() : "";
         String password = etPassword.getText() != null ? etPassword.getText().toString().trim() : "";
+        String confirmPassword = etConfirmPassword.getText() != null ? etConfirmPassword.getText().toString().trim() : "";
 
-        // Enable button only if both fields are not empty
-        btnLogin.setEnabled(!email.isEmpty() && !password.isEmpty());
+        // Enable button only if all fields are filled
+        btnRegister.setEnabled(!email.isEmpty() && !username.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty());
     }
 
     private void setupListeners() {
@@ -122,48 +119,49 @@ public class MainActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         };
 
-        // Attach the watcher to both input fields
         etEmail.addTextChangedListener(textWatcher);
+        etUsername.addTextChangedListener(textWatcher);
         etPassword.addTextChangedListener(textWatcher);
+        etConfirmPassword.addTextChangedListener(textWatcher);
 
-        // Run an initial check to disable the button when the app starts
         checkFieldsForEmptyValues();
 
-        btnLogin.setOnClickListener(v -> {
-            String email = etEmail.getText() != null ? etEmail.getText().toString().trim() : "";
+        btnRegister.setOnClickListener(v -> {
+            String username = etUsername.getText() != null ? etUsername.getText().toString().trim() : "";
             String password = etPassword.getText() != null ? etPassword.getText().toString().trim() : "";
+            String confirmPassword = etConfirmPassword.getText() != null ? etConfirmPassword.getText().toString().trim() : "";
 
-            Toast.makeText(this, "Logging in as " + email + "...", Toast.LENGTH_SHORT).show();
+            if (!password.equals(confirmPassword)) {
+                Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-            // Clear the text fields after successful submission
+            Toast.makeText(this, "Account created for " + username + "!", Toast.LENGTH_SHORT).show();
+
             etEmail.setText("");
+            etUsername.setText("");
             etPassword.setText("");
-            
-            // Clear focus and hide the keyboard
+            etConfirmPassword.setText("");
+
             etEmail.clearFocus();
+            etUsername.clearFocus();
             etPassword.clearFocus();
+            etConfirmPassword.clearFocus();
             hideKeyboard();
         });
 
-        tvForgotPassword.setOnClickListener(v ->
-            Toast.makeText(this, "Forgot Password clicked", Toast.LENGTH_SHORT).show()
-        );
-
-        tvSignUp.setOnClickListener(v -> {
-            Intent intent = new Intent(this, RegisterActivity.class);
-            startActivity(intent);
-        });
+        tvLogIn.setOnClickListener(v -> finish());
 
         btnGoogle.setOnClickListener(v ->
-            Toast.makeText(this, "Google login clicked", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Register with Google clicked", Toast.LENGTH_SHORT).show()
         );
 
         btnFacebook.setOnClickListener(v ->
-            Toast.makeText(this, "Facebook login clicked", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Register with Facebook clicked", Toast.LENGTH_SHORT).show()
         );
 
         btnGithub.setOnClickListener(v ->
-            Toast.makeText(this, "GitHub login clicked", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Register with GitHub clicked", Toast.LENGTH_SHORT).show()
         );
     }
 }

@@ -11,4 +11,16 @@
     <string name="cd_google">Log in with Google</string>
     <string name="cd_facebook">Log in with Facebook</string>
     <string name="cd_github">Log in with GitHub</string>
+
+    <!-- Register Screen Strings -->
+    <string name="create_account">Create Account</string>
+    <string name="email">Email</string>
+    <string name="username">Username</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="register">Register</string>
+    <string name="or_register_with">Or register with</string>
+    <string name="already_have_account_log_in">Already have an account? &lt;font color=\'#50BDB8\'&gt;&lt;b&gt;Log In&lt;/b&gt;&lt;/font&gt;</string>
+    <string name="cd_register_google">Register with Google</string>
+    <string name="cd_register_facebook">Register with Facebook</string>
+    <string name="cd_register_github">Register with GitHub</string>
 </resources>
